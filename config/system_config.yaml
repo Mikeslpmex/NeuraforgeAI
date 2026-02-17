@@ -1,0 +1,43 @@
+# Configuración del sistema NeuraForgeAI
+neuraforge:
+  version: "3.0.0"
+  nombre: "NeuraForgeAI Enterprise"
+  filosofia: "No importa qué vendes, importa cómo lo haces mejor"
+  
+equipo:
+  fundador: "Miguel Chávez"
+  ia_colaborativa: "AMI"
+  fecha_inicio: "2024-01-01"
+
+tesorero_orion:
+  modo: "inmutable"
+  max_supply: 21000000
+  exchange_rate_usd: 0.10
+  distribucion_default:
+    comunidad: 30
+    reinversion: 30
+    desarrollo: 20
+    fundador: 10
+    reserva: 10
+
+consejo_sapiens:
+  pesos:
+    ia: 0.33
+    comunidad: 0.33
+    etica: 0.33
+    caos: 0.01
+  votacion_dias: 7
+  min_votos_comunidad: 100
+
+infraestructura:
+  cloud_provider: "oracle"
+  region: "mx-queretaro"
+  backup_diario: true
+  alertas_telegram: true
+
+integraciones:
+  google_home: true
+  telegram: true
+  spotify: true
+  firebase: true
+  vertex_ai: true
