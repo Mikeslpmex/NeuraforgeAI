@@ -1,0 +1,21 @@
+# Credenciales y entornos
+.env
+*.env
+credentials.json
+service-account-key.json
+*secret*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+
+# Termux
+*.log
+*.lock
+ngrok
+.DS_Store
