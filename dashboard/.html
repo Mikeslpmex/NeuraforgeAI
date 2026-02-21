@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuraforgeAI · Panel de Usuario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a463f5;
+            --accent: #00d2d3;
+            --text: #f0f0f0;
+            --highlight: #ffd700;
+            --success: #00cc66;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a1a2e 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            color: var(--accent);
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--accent), #a463f5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 15px;
+        }
+        
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: var(--accent);
+            color: #000;
+        }
+        
+        .status-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgba(0, 204, 102, 0.15);
+            border-left: 5px solid var(--success);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .status-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        
+        .pulse {
+            width: 12px;
+            height: 12px;
+            background-color: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 204, 102, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 204, 102, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 204, 102, 0); }
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        
+        .panel-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(8px);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .metric-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 3px solid var(--secondary);
+        }
+        
+        .metric-title {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .metric-sub {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+
+        .modules-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .module-card {
+            background: linear-gradient(45deg, rgba(0,0,0,0.4), rgba(108, 92, 231, 0.1));
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--card-border);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .module-icon {
+            font-size: 24px;
+            color: var(--highlight);
+        }
+
+        .module-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-action:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon"><i class="fas fa-network-wired"></i></div>
+                <h1>NeuraforgeAI</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Mi Bot</a></li>
+                    <li><a href="#">Billetera BTC</a></li>
+                    <li><a href="#">Soporte</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="status-banner">
+            <div class="status-text">
+                <div class="pulse"></div>
+                <strong>Bot NeuraforgeAI:</strong> Activo y Sincronizado con la Red
+            </div>
+            <div style="font-size: 14px; opacity: 0.8;">Último ping: hace 2 mins</div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="panel-section">
+                <h3 style="margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">Rendimiento de Hardware</h3>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-title">Forgecoins Generados</div>
+                        <div class="metric-value">145.50 FGC</div>
+                        <div class="metric-sub">≈ 0.0012 BTC (Retiro Automático)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Hardware Reciclado/Donado</div>
+                        <div class="metric-value">3 Nodos</div>
+                        <div class="metric-sub">1 Móvil, 2 Google Home</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Bots Sub-Afiliados</div>
+                        <div class="metric-value">12 Bots</div>
+                        <div class="metric-sub">+3.5 FGC de comisión de red</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Poder de Aportación</div>
+                        <div class="metric-value">84%</div>
+                        <div class="metric-sub">Salud del nodo: Óptima</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                    <h4 style="color: var(--accent); margin-bottom: 10px;"><i class="fas fa-link"></i> Tu Enlace de Afiliado</h4>
+                    <p style="font-size: 12px; color: #aaa; margin-bottom: 10px;">Invita a otros a conectar su hardware inactivo y gana comisiones recurrentes.</p>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" value="https://neuraforge.ai/ref/bot-5892X" readonly style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #444; background: #111; color: #fff;">
+                        <button class="btn-action" style="width: auto; margin: 0;"><i class="fas fa-copy"></i> Copiar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <h3 style="margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px;">Ecosistema</h3>
+                
+                <div class="modules-grid">
+                    
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon"><i class="fas fa-chart-line" style="color: var(--success);"></i></div>
+                            <div class="module-title">Investment Project</div>
+                        </div>
+                        <p style="font-size: 13px; color: #ccc;">Inversiones seguras con rendimientos mensuales respaldados por la red de bots.</p>
+                        <button class="btn-action">Ver Rendimientos</button>
+                    </div>
+
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon"><i class="fas fa-gamepad" style="color: var(--secondary);"></i></div>
+                            <div class="module-title">Modo Junior</div>
+                        </div>
+                        <p style="font-size: 13px; color: #ccc;">Educación financiera para niños. Gana FGC por logros y canjea en Google Play.</p>
+                        <button class="btn-action btn-outline">Configurar Perfil Niño</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

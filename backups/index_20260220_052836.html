@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuraforge Admin | Super App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+    <style>
+        :root { --p-dark: #020617; --p-blue: #3b82f6; --accent: #10b981; --glass: rgba(255, 255, 255, 0.03); --gold: #f59e0b; }
+        body { background: radial-gradient(circle at top left, #1e293b, #020617); color: #f8fafc; font-family: 'Inter', sans-serif; min-height: 100vh; margin: 0; }
+        .sidebar { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-right: 1px solid rgba(255, 255, 255, 0.1); width: 260px; height: 100vh; position: fixed; z-index: 1000; }
+        .main-content { margin-left: 260px; padding: 30px; }
+        .card-nexus { background: var(--glass); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+        .nav-link { color: #94a3b8; padding: 12px 20px; display: flex; align-items: center; text-decoration: none; }
+        .nav-link.active { background: linear-gradient(90deg, var(--p-blue), transparent); color: white; border-radius: 10px; }
+        .fc-balance { background: linear-gradient(135deg, var(--gold), #d97706); color: white; padding: 8px 15px; border-radius: 50px; font-weight: bold; }
+        .shield-active { color: var(--accent); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="p-4">
+            <h3 class="fw-bold text-white mb-0">NeuraForge<span class="text-primary">AI</span></h3>
+            <small class="text-muted">Nexus Strategic System</small>
+        </div>
+        <nav class="nav flex-column mt-3 px-3">
+            <a class="nav-link active" href="#"><i class="fas fa-shield-halved me-3"></i>Dashboard</a>
+            <a class="nav-link" href="#" onclick="mostrarCrearBilletera()"><i class="fas fa-wallet me-3"></i>Nueva Billetera</a>
+            <a class="nav-link" href="https://github.com/Mikeslimex/NeurofarageAI" target="_blank"><i class="fab fa-github me-3"></i>GitHub</a>
+        </nav>
+        <div class="position-absolute bottom-0 p-4 w-100 text-center">
+            <span class="fc-balance" id="main-balance"><i class="fas fa-coins"></i> 0 FC</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="fw-bold mb-0">Super App de Administración</h2>
+                <p class="text-muted">Estado del Sistema: <span class="shield-active">● Protegido</span></p>
+            </div>
+            <button class="btn btn-outline-primary" onclick="testNotificacion()">Probar Push</button>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card-nexus text-center">
+                    <p class="text-muted mb-1">Ingresos Globales</p>
+                    <h2 class="fw-bold" id="ingresos-totales">$0.00</h2>
+                    <small class="text-success"><i class="fas fa-arrow-up"></i> Live</small>
+                </div>
+            </div>
+
+            <div class="col-md-12"><h3 class="fw-bold mb-4">Escalafón de la Colmena 🐝</h3></div>
+            <div class="col-md-3">
+                <div class="card-nexus border-info text-center">
+                    <div class="fs-1">🌱</div>
+                    <h4 class="fw-bold">Sembrador</h4>
+                    <p class="small text-muted">0-100 FC</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card-nexus border-primary">
+                    <h3>🚀 Recompensas GitHub</h3>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="github-user" class="form-control bg-dark text-white border-secondary" placeholder="GitHub Username">
+                        <button class="btn btn-primary" onclick="vincularWallet()">Vincular</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card-nexus border-warning">
+                    <h3>👨‍👩- Crear Billetera Módulo</h3>
+                    <div class="d-flex flex-column gap-2">
+                        <input type="text" id="hija-nombre" class="form-control bg-dark text-white" placeholder="Nombre (Ej: Hija)">
+                        <input type="text" id="hija-id" class="form-control bg-dark text-white" placeholder="Telegram ID">
+                        <button class="btn btn-warning fw-bold" onclick="crearBilleteraHijaUI()">Generar Billetera</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
