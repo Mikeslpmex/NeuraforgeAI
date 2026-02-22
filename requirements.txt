@@ -1,6 +1,4 @@
-numpy
-scipy
-matplotlib
-PyTorch 
-TensorFlow
-
+pyTelegramBotAPI
+flask
+requests
+gunicorn
