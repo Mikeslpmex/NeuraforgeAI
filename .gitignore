@@ -1,0 +1,56 @@
+# --- Seguridad y Secretos ---
+*.keystore
+*.jks
+*.json
+.env
+.env.local
+*.pem
+*.key
+.ssh/
+credentials/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Archivos de Sistema y Editor ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Carpetas de Proyecto Específicas (No subir a Git) ---
+apks/
+storage/
+build/
+dist/
+.cache/
+.npm/
+.pm2/
+logs/
+*.log
+
+# --- Historial y Config Local ---
+.bash_history
+.gitconfig
+.lesshst
+.python_history
+.wget-hsts
+.termux/

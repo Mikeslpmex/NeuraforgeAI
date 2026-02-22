@@ -1,0 +1,14 @@
+.git
+.gitignore
+README.md
+.env
+*.keystore
+*.json
+apks/
+storage/
+.cache/
+.npm/
+.vscode/
+.idea/
+__pycache__/
+*.log
