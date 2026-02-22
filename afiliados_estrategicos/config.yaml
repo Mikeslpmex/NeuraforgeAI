@@ -1,0 +1,25 @@
+# Configuración del Sistema de Afiliados
+google_ads:
+  developer_token: "TU_TOKEN"
+  client_id: "TU_CLIENT_ID"
+  client_secret: "TU_SECRET"
+  refresh_token: "TU_REFRESH"
+
+servicios_prioritarios:
+  - ORACLE_CLOUD
+  - DIGITAL_OCEAN
+  - GOOGLE_CLOUD
+
+comisiones:
+  default: 0.15
+  premium: 0.25
+  enterprise: 0.30
+
+cache:
+  ttl_minutes: 5
+  max_size: 1000
+
+entrenamiento:
+  auto_retrain: true
+  min_samples: 50
+  frequency_hours: 24

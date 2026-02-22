@@ -1,0 +1,27 @@
+{
+    "factores": {
+        "US": 1.0,
+        "DE": 1.0,
+        "FR": 1.0,
+        "ES": 0.9,
+        "IT": 0.9,
+        "GB": 1.0,
+        "CA": 0.95,
+        "MX": 0.45,
+        "BR": 0.35,
+        "AR": 0.19,
+        "CO": 0.30,
+        "CL": 0.40,
+        "PE": 0.32,
+        "IN": 0.25,
+        "CN": 0.30,
+        "JP": 1.1,
+        "KR": 0.95,
+        "NG": 0.15,
+        "ZA": 0.40,
+        "EG": 0.22
+    },
+    "precio_base_global_usd": 99,
+    "forge_coin_exchange_rate_usd": 0.10,
+    "actualizado": "2026-02-17"
+}

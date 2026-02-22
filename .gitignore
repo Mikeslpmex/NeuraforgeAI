@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # --- Seguridad y Secretos ---
 *.keystore
 *.jks
@@ -54,3 +55,26 @@ logs/
 .python_history
 .wget-hsts
 .termux/
+=======
+# Credenciales y entornos
+.env
+*.env
+credentials.json
+service-account-key.json
+*secret*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+
+# Termux
+*.log
+*.lock
+ngrok
+.DS_Store
+>>>>>>> dd4f4e8fbb17b2fd5d747e0282c7a564ca0d5732

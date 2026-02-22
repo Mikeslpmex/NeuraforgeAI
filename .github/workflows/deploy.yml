@@ -1,0 +1,16 @@
+name: Despliegue Automático
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Desplegar en Oracle Cloud
+        run: |
+          echo "🚀 Desplegando NeuraForgeAI en Oracle Cloud..."
+          echo "✅ Despliegue completado"

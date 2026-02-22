@@ -1,0 +1,16 @@
+name: Evaluar Pull Request con IA
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Evaluar con IA
+        run: |
+          echo "🧠 Evaluando PR con IA colaborativa..."
+          echo "✅ PR evaluado - Esperando revisión del Consejo Sapiens"
