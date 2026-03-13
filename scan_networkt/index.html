@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexus WLAN - Radar Live</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; text-align: center; }
+        canvas { background: #000; border: 2px solid #00ff41; border-radius: 50%; box-shadow: 0 0 20px #00ff41; margin-top: 20px; }
+        .stats { margin: 10px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <h1>NEXUS WLAN MAPPER - RADAR SYSTEM</h1>
+    <div class="stats">Entidades Detectadas: <span id="count">0</span> | Heading: <span id="heading">0</span>°</div>
+    <canvas id="radarCanvas" width="600" height="600"></canvas>
+
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = "https://tu-proyecto.supabase.co";
+        const SUPABASE_KEY = "tu-api-key";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const canvas = document.getElementById('radarCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const scale = 20; // 1 metro = 20 pixeles
+
+        function drawRadarGrid(heading) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dibujar círculos de distancia
+            ctx.strokeStyle = "rgba(0, 255, 65, 0.2)";
+            for(let i = 1; i <= 5; i++) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, i * 50, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // Dibujar línea de orientación (Brújula)
+            const rad = (heading - 90) * (Math.PI / 180);
+            ctx.strokeStyle = "#ff0000";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + Math.cos(rad) * 280, centerY + Math.sin(rad) * 280);
+            ctx.stroke();
+        }
+
+        function drawEntity(x, y, isMe = false) {
+            ctx.fillStyle = isMe ? "#ff0000" : "#00ff41";
+            ctx.beginPath();
+            ctx.arc(centerX + (x * scale), centerY - (y * scale), 8, 0, Math.PI * 2);
+            ctx.fill();
+            // Efecto Glow
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = isMe ? "red" : "#00ff41";
+        }
+
+        // Escuchar cambios en tiempo real desde la DB
+        const channel = supabase
+            .channel('public:radar_live')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'radar_live' }, payload => {
+                const data = payload.new;
+                document.getElementById('count').innerText = data.entities_count;
+                document.getElementById('heading').innerText = data.heading;
+
+                drawRadarGrid(data.heading);
+                // Dibujar mi posición (Triangulada)
+                drawEntity(data.my_pos_x, data.my_pos_y, true);
+            })
+            .subscribe();
+
+        // Inicializar rejilla
+        drawRadarGrid(0);
+    </script>
+</body>
+</html>
+

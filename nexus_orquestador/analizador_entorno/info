@@ -1,0 +1,39 @@
+def cargar_y_ejecutar_modulo(self, modulo_info: ModuloInfo) -> Any:
+    # ... (Código de importación) ...
+    
+    funcion_principal = getattr(modulo, modulo_info.funcion_principal)
+    
+    # 1. Preparar el diccionario de argumentos
+    kwargs_ejecucion = modulo_info.parametros.copy()
+    
+    # 2. INYECCIÓN DINÁMICA DE RESULTADOS PREVIOS (La clave del embebido)
+    # Asume que la función espera un parámetro llamado 'estrategia'
+    # o 'datos_analizador' basado en su dependencia.
+    
+    # Si la función principal es 'establecer_estrategia' (nexus_mente)
+    if modulo_info.nombre == "nexus_mente":
+        # Inyecta el resultado del análisis (el contexto)
+        if "analizador_entorno" in self.resultados:
+            kwargs_ejecucion["datos_analizador"] = self.resultados["analizador_entorno"]
+    
+    # Si la función es 'generar_contenido' o 'ejecutar_campana_promocional'
+    elif "nexus_mente" in modulo_info.dependencias:
+        # Inyecta la estrategia generada por el AGI
+        if "nexus_mente" in self.resultados:
+            estrategia_agi = self.resultados["nexus_mente"]
+            
+            # Mapea la estrategia del AGI a los parámetros del módulo:
+            
+            if modulo_info.nombre == "generador_contenido":
+                kwargs_ejecucion["modo_generacion"] = estrategia_agi.get("modo_contenido")
+                
+            elif modulo_info.nombre == "promotor_automatico":
+                kwargs_ejecucion["canales"] = estrategia_agi.get("canales")
+                kwargs_ejecucion["agresividad"] = estrategia_agi.get("agresividad")
+    
+    # 3. Ejecutar con los parámetros dinámicos
+    logger.info(f"🚀 Ejecutando {modulo_info.nombre} con: {kwargs_ejecucion}")
+    resultado = funcion_principal(**kwargs_ejecucion)
+    
+    # ... (Manejo de errores) ...
+    return resultado

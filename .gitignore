@@ -78,3 +78,5 @@ env/
 ngrok
 .DS_Store
 >>>>>>> dd4f4e8fbb17b2fd5d747e0282c7a564ca0d5732
+.quantum_vault_keys.json
+gcp_keys.json
