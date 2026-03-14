@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# station-osin-pro
-=======
+
 # 🚀 NeuraForgeAI - Ecosistema de IA Autosustentable, Colaborativa y Ética
 
 <div align="center">
