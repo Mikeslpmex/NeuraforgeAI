@@ -7,11 +7,11 @@ python-telegram-bot==20.8
 python-telegram-bot[job-queue]==20.8
 fastapi==0.110.0
 uvicorn==0.27.1
-requests==2.31.0
+requests==2.33.0
 
 # 2. Seguridad y Tesorería Inmutable (El Candado)
 python-dotenv==1.0.1
-cryptography==42.0.5
+cryptography==46.0.6
 
 # 3. Web3 y Blockchain (Conexión a Binance/TON)
 web3==6.15.1
