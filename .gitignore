@@ -82,3 +82,6 @@ ngrok
 gcp_keys.json
 .quantum_vault_keys.json
 gcp_keys.json
+.env
+__pycache__/
+*.pyc

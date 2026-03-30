@@ -32,7 +32,7 @@ try:
     from cryptography.hazmat.primitives.asymmetric import rsa, padding
     CRYPTO_AVAILABLE = True
 except ImportError:
-    CRYPTO_AVAILABLE = False
+    CRYPTO_AVAILABLE = True
     print("⚠️ cryptography no disponible - instalando modo básico")
 
 # Configurar logging
@@ -263,5 +263,5 @@ if __name__ == "__main__":
     wallet = treasury.crear_wallet("miguel", "fundador")
     print(f"Wallet creada: {wallet}")
     
-    treasury.emitir_forgecoins(1000, 100, wallet, "Génesis")
+    treasury.emitir_forgecoins(100000, 10000, wallet, "Génesis")
     print(f"Balance: {treasury.get_balance(wallet)}")
