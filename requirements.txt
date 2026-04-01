@@ -1,23 +1,5 @@
-# ==========================================
-# REQUERIMIENTOS CORE: NEURAFORGE AI
-# ==========================================
-
-# 1. Telegram y Webhooks (El puente con los usuarios)
-python-telegram-bot==20.8
-python-telegram-bot[job-queue]==20.8
-fastapi==0.110.0
-uvicorn==0.27.1
-requests==2.31.0
-
-# 2. Seguridad y Tesorería Inmutable (El Candado)
-python-dotenv==1.0.1
-cryptography==42.0.5
-
-# 3. Web3 y Blockchain (Conexión a Binance/TON)
-web3==6.15.1
-
-# 4. Google Cloud y Mente Colmena (Sato / Firebase)
-firebase-admin==6.5.0
-google-cloud-aiplatform>=1.43.0
-google-cloud-secret-manager>=2.18.2
-
+fastapi
+uvicorn
+python-dotenv
+google-generativeai
+jinja2
