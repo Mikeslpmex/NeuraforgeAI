@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -92,3 +93,119 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)
+=======
+#!/usr/bin/env python3
+"""
+NeuraforgeAI - Core Financial Ecosystem
+Sistema autosustentable de inteligencia artificial con gestión financiera
+"""
+
+import asyncio
+import logging
+from dotenv import load_dotenv
+import os
+
+# Cargar variables de entorno
+load_dotenv()
+
+# Configuración de logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/neuraforge.log'),
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
+class NeuraforgeCore:
+    def __init__(self):
+        self.treasury = None
+        self.bots = {}
+        self.payments = None
+        
+    async def initialize(self):
+        """Inicializa todo el ecosistema"""
+        logger.info("🌱 Iniciando NeuraforgeAI Core...")
+        
+        # 1. Inicializar Tesorería
+        from neuraforge.core.treasury import TreasuryManager
+        self.treasury = TreasuryManager()
+        logger.info("✅ Tesorería inicializada")
+        
+        # 2. Inicializar Pagos
+        from neuraforge.payments.stripe_handler import StripePaymentProcessor
+        self.payments = StripePaymentProcessor(self.treasury)
+        logger.info("✅ Pasarela de pagos inicializada")
+        
+        # 3. Registrar bots iniciales
+        await self.register_bots()
+        logger.info("✅ Bots registrados")
+                logger.info("🚀 NeuraforgeAI listo para operar")
+    
+    async def register_bots(self):
+        """Registra bots en el sistema"""
+        from neuraforge.suite.bots.sabroso_bot import SabrosoBot
+        
+        bot = SabrosoBot("NEXUS_MAIN", self.treasury, self.payments)
+        self.bots["NEXUS_MAIN"] = bot
+        
+        logger.info(f"🤖 Bot 'NEXUS_MAIN' registrado")
+    
+    async def process_transaction(self, amount_usd: float, recipient_bot: str):
+        """Procesa una transacción y convierte a ForgeCoins"""
+        try:
+            # Procesar pago real (Stripe/PayPal)
+            fc_rate = 10  # 1 USD = 10 FC (configurable)
+            fc_amount = amount_usd * fc_rate
+            
+            # Depositar en el bot específico
+            self.treasury.create_wallet(recipient_bot)
+            self.treasury.deposit(recipient_bot, fc_amount)
+            
+            logger.info(f"💰 Transacción procesada: {amount_usd} USD → {fc_amount} FC para {recipient_bot}")
+            return {"success": True, "fc_received": fc_amount}
+            
+        except Exception as e:
+            logger.error(f"❌ Error en transacción: {str(e)}")
+            return {"success": False, "error": str(e)}
+    
+    async def run(self):
+        """Ejecuta el ciclo principal del sistema"""
+        while True:
+            try:
+                # Simular ciclo de trabajo
+                logger.info("⏳ Ciclo de trabajo iniciado...")
+                
+                # Aquí irían las lógicas de tus bots
+                for bot_name, bot in self.bots.items():
+                    if hasattr(bot, 'work'):
+                        await bot.work()
+                
+                await asyncio.sleep(60)  # Esperar 1 minuto
+                
+            except KeyboardInterrupt:
+                logger.info("🛑 Sistema detenido por usuario")
+                break
+            except Exception as e:
+                logger.error(f"❌ Error en ciclo: {str(e)}")
+                await asyncio.sleep(5)
+async def main():
+    """Función principal"""
+    core = NeuraforgeCore()
+    
+    try:
+        await core.initialize()
+        await core.run()
+    except Exception as e:
+        logger.error(f"❌ Error fatal: {str(e)}")
+        raise
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("👋 Sistema finalizado")
+>>>>>>> 4149257c (Organización inicial del proyecto)

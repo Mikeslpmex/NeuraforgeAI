@@ -13,7 +13,7 @@ from flask import Flask, request, redirect, jsonify
 import telebot
 
 # ================= CONFIGURACIÓN =================
-TELEGRAM_TOKEN = "8140846319:AAGQ_znQZFjMPMgS9l6uf0kWINkDC5ZvImY"
+TELEGRAM_TOKEN = "8665608391:AAFs8OnNmbhFuADlPxD8ZEjCrSCubJiFkAU"
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 # Links de Pago
