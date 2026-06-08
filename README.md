@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # station-osin-pro
 =======
 # 🚀 NeuraForgeAI - Ecosistema de IA Autosustentable, Colaborativa y Ética
@@ -80,4 +80,3 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 
 </div>
 # NeuraforgeAI
->>>>>>> dd4f4e8fbb17b2fd5d747e0282c7a564ca0d5732
