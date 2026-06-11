@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -208,4 +207,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         logger.info("👋 Sistema finalizado")
->>>>>>> 4149257c (Organización inicial del proyecto)
+(Organización inicial del proyecto)
