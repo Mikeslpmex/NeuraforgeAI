@@ -1,10 +1,8 @@
 services:
   - type: web
     name: neuraforge-api
-    env: python
+    env: docker
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python main_prod.py
     autoDeploy: true
     envVars:
       - key: TELEGRAM_BOT_TOKEN
@@ -15,18 +13,6 @@ services:
         sync: false
       - key: OXXO_SECRET_KEY
         sync: false
-      - key: WEB_APP_URL
-        fromService:
-          type: web
-
-  - type: worker
-    name: neuraforge-monetizador
-    env: python
-    plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python api_publica/monetizador.py
-    autoDeploy: true
-    envVars:
       - key: WEB_APP_URL
         fromService:
           type: web
