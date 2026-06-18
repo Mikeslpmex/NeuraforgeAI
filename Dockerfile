@@ -1,9 +1,21 @@
-FROM python:3.12-slim
+# Imagen base ligera
+FROM python:3.11-slim
+
+# Directorio de trabajo
 WORKDIR /app
+
+# Copiar dependencias
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+
+# Actualizar pip y limpiar caché
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copiar el resto del proyecto
 COPY . .
-# Exponer el puerto que Google Cloud Run exige
-EXPOSE 8080
-# Ejecutar el monetizador
-CMD ["python", "monetizador.py"]
+
+# Exponer el puerto que Render usa por defecto
+EXPOSE 10000
+
+# Comando de inicio
+CMD ["python", "main_prod.py"]
