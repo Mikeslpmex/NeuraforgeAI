@@ -1,25 +1,12 @@
-databases:
-  - name: neuraforge-db
-    databaseName: neuraforge
-    user: neuraforge_user
-    plan: free
-    ipAllowList: []
-
 services:
-  # Web Service: API + Mini App + Webhooks
   - type: web
     name: neuraforge-api
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn neuraforge.api.main:app --host 0.0.0.0 --port $PORT
+    startCommand: python main_prod.py
+    autoDeploy: true
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: DATABASE_URL
-        fromDatabase:
-          name: neuraforge-db
-          property: connectionString
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: STRIPE_SECRET_KEY
@@ -31,29 +18,15 @@ services:
       - key: WEB_APP_URL
         fromService:
           type: web
-          name: neuraforge-api
-          property: host
-      - key: FORGE_COINS_RATE
-        value: "10"
 
-  # Background Worker: Bot de Telegram + Lógica de bots
   - type: worker
-    name: neuraforge-worker
+    name: neuraforge-monetizador
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: python neuraforge/worker/main.py
+    startCommand: python api_publica/monetizador.py
+    autoDeploy: true
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: DATABASE_URL
-        fromDatabase:
-          name: neuraforge-db
-          property: connectionString
-      - key: TELEGRAM_BOT_TOKEN
-        sync: false
       - key: WEB_APP_URL
         fromService:
           type: web
-          name: neuraforge-api
-          property: host
