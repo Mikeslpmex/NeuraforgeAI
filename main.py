@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from fastapi.staticfiles import StaticFiles
+app.mount("/dashboard", StaticFiles(directory="dashboard"), name="dashboard")
+
 # Configura tu API KEY de Google Gemini aquí o en el .env de Render
 GENAI_API_KEY = os.getenv("GENAI_API_KEY", "TU_API_KEY_AQUI")
 genai.configure(api_key=GENAI_API_KEY)
