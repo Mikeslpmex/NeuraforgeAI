@@ -1,0 +1,571 @@
+import React, { useState } from 'react';
+import { HardwareNode, NodeType } from '../types';
+import { 
+  Plus, 
+  Cpu, 
+  Gamepad2, 
+  TrendingUp, 
+  Smartphone, 
+  Volume2, 
+  Laptop, 
+  Radio, 
+  Tv, 
+  Server,
+  Sparkles, 
+  Check, 
+  X, 
+  CheckCircle2, 
+  XCircle, 
+  ArrowRight,
+  Shield, 
+  Percent, 
+  Clock 
+} from 'lucide-react';
+
+interface EcosystemSectionProps {
+  nodes: HardwareNode[];
+  onAddNode: (newNode: HardwareNode) => void;
+  onRemoveNode: (id: string) => void;
+  totalFgc: number;
+  onDeductFgc: (amount: number) => boolean;
+  onStakedAdded: (amount: number, rewardRate: number, duration: number) => void;
+  stakedFgc: number;
+}
+
+export default function EcosystemSection({
+  nodes,
+  onAddNode,
+  onRemoveNode,
+  totalFgc,
+  onDeductFgc,
+  onStakedAdded,
+  stakedFgc
+}: EcosystemSectionProps) {
+  // Device Binder Simulator States
+  const [showBinderModal, setShowBinderModal] = useState(false);
+  const [deviceName, setDeviceName] = useState('');
+  const [deviceType, setDeviceType] = useState<NodeType>('mobile');
+  const [devicePower, setDevicePower] = useState(25);
+  const [bindingLogs, setBindingLogs] = useState<string[]>([]);
+  const [bindingProgress, setBindingProgress] = useState(0); // 0 to 100
+  const [isBinding, setIsBinding] = useState(false);
+
+  // Staking Investment States
+  const [showStakingModal, setShowStakingModal] = useState(false);
+  const [stakeAmount, setStakeAmount] = useState('50');
+  const [selectedDuration, setSelectedDuration] = useState(6); // months
+  const [stakingSuccess, setStakingSuccess] = useState(false);
+
+  // Modo Junior States
+  const [showJuniorModal, setShowJuniorModal] = useState(false);
+  const [juniorEnabled, setJuniorEnabled] = useState(false);
+  const [childName, setChildName] = useState('');
+  const [targetGoal, setTargetGoal] = useState('10'); // FGC
+  const [selectedReward, setSelectedReward] = useState('tarjeta-google-play');
+
+  // Trigger Binding Animation
+  const handleStartBinding = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!deviceName.trim()) return;
+
+    setIsBinding(true);
+    setBindingProgress(0);
+    setBindingLogs(['[INIT] Buscando puerto Bluetooth / WLAN de cercanía...']);
+
+    const steps = [
+      { p: 20, l: `[CONNECT] Negociando protocolo de enlace con "${deviceName}"...` },
+      { p: 50, l: '[AUTH] Encriptando nodo con certificado Neuraforge SHA-256...' },
+      { p: 75, l: '[OPTIMIZE] Determinando tasa de aporte energético y calibración CPU...' },
+      { p: 100, l: '¡[SUCCESS] Conexión establecida! Iniciando minería descentralizada.' }
+    ];
+
+    steps.forEach((step, index) => {
+      setTimeout(() => {
+        setBindingProgress(step.p);
+        setBindingLogs((prev) => [...prev, step.l]);
+        
+        if (step.p === 100) {
+          setTimeout(() => {
+            // Add the dynamic node
+            // FGC per hour is calculated based on device power score
+            const calculatedFgcPerHour = Number((devicePower * 0.05).toFixed(2));
+            const newDevice: HardwareNode = {
+              id: 'node-' + Math.random().toString(36).substr(2, 9),
+              name: deviceName,
+              type: deviceType,
+              powerContribution: devicePower,
+              status: 'online',
+              addedAt: new Date().toLocaleDateString('es-ES'),
+              fgcPerHour: calculatedFgcPerHour,
+              hardwareDetails: `Frecuencia optimizada a ${(devicePower * 0.12).toFixed(2)} Ghz.`
+            };
+            onAddNode(newDevice);
+            setIsBinding(false);
+            setShowBinderModal(false);
+            setDeviceName('');
+            setDevicePower(25);
+          }, 800);
+        }
+      }, (index + 1) * 800);
+    });
+  };
+
+  // Trigger Staking Stash
+  const handleStakingSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const amount = Number(stakeAmount);
+    if (isNaN(amount) || amount <= 0) return;
+    
+    const success = onDeductFgc(amount);
+    if (success) {
+      // expected APY based on duration: 6m=12%, 12m=20%
+      const rewardRate = selectedDuration === 6 ? 0.12 : 0.20;
+      onStakedAdded(amount, rewardRate, selectedDuration);
+      setStakingSuccess(true);
+      setTimeout(() => {
+        setStakingSuccess(false);
+        setShowStakingModal(false);
+      }, 2000);
+    } else {
+      alert("No posees suficientes Forgecoins (FGC) en tu billetera activa para iniciar el staking.");
+    }
+  };
+
+  const apyPercent = selectedDuration === 6 ? 12 : 20;
+  const projectedReturn = Number(stakeAmount) * (1 + (apyPercent / 100) * (selectedDuration / 12));
+
+  return (
+    <div className="cyber-card p-6 rounded-2xl">
+      <div className="flex justify-between items-center mb-6 pb-2 border-b border-white/5">
+        <h3 className="font-display font-bold text-lg text-white flex items-center gap-2">
+          <Cpu className="w-5 h-5 text-purple-400" />
+          <span>Ecosistema de Nodos Activos</span>
+        </h3>
+        
+        <button
+          onClick={() => setShowBinderModal(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-bold text-xs shadow-md cursor-pointer transition-all active:scale-95 text-nowrap"
+        >
+          <Plus className="w-4 h-4 shrink-0" />
+          <span>Vincular Hardware</span>
+        </button>
+      </div>
+
+      {/* Grid of existing nodes */}
+      <h4 className="text-[10px] font-mono font-bold text-[#00d2d3] uppercase tracking-widest mb-3">
+        Nodos Enlazados a tu Bot
+      </h4>
+      
+      <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1 mb-6">
+        {nodes.map((node) => {
+          // Choose icon for node types
+          const getNodeIcon = (type: NodeType) => {
+            switch(type) {
+              case 'mobile': return <Smartphone className="w-4 h-4 text-cyan-400" />;
+              case 'smartspeaker': return <Volume2 className="w-4 h-4 text-yellow-400" />;
+              case 'router': return <Radio className="w-4 h-4 text-[#a463f5]" />;
+              case 'laptop': return <Laptop className="w-4 h-4 text-green-400" />;
+              default: return <Server className="w-4 h-4 text-gray-400" />;
+            }
+          };
+
+          return (
+            <div 
+              key={node.id}
+              className="bg-black/30 p-3.5 rounded-xl border border-white/5 flex items-center justify-between hover:border-cyan-500/25 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center shrink-0 border border-white/10">
+                  {getNodeIcon(node.type)}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-gray-200">{node.name}</span>
+                    <span className="text-[9px] font-mono px-1 rounded bg-[#00d2d3]/10 text-cyan-300 capitalize">
+                      {node.type}
+                    </span>
+                  </div>
+                  <p className="text-[10px] font-mono text-gray-500 mt-0.5">
+                    Genera: <strong className="text-cyan-400">{node.fgcPerHour} FGC/h</strong> · {node.hardwareDetails || 'Aporte constante'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <span className="text-xs font-mono font-bold text-gray-300">Aporte: {node.powerContribution}%</span>
+                  <span className="block text-[9px] text-emerald-400 font-medium">Salud óptima</span>
+                </div>
+                {/* Prevent deleting base core node easily to avoid zeroing stats completely */}
+                <button
+                  onClick={() => onRemoveNode(node.id)}
+                  title="Desconectar hardware"
+                  className="w-7 h-7 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 flex items-center justify-center border border-red-500/20 hover:border-red-500/30 transition-colors text-xs cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Modules list: Investment Project & Modo Junior */}
+      <h4 className="text-[10px] font-mono font-bold text-purple-300 uppercase tracking-widest mb-3 pt-3 border-t border-white/5">
+        Ecosistema Neuraforge
+      </h4>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        {/* Module 1: Investment Project */}
+        <div className="bg-gradient-to-br from-black/40 to-slate-900/10 border border-white/5 rounded-2xl p-4 flex flex-col justify-between hover:border-emerald-500/25 transition-all">
+          <div>
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-7 h-7 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+              <span className="font-display font-bold text-sm text-white">Investment Project</span>
+            </div>
+            <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+              Realiza Staking de tus Forgecoins generados para obtener rendimientos mensuales respaldados por la red global de bots.
+            </p>
+            {stakedFgc > 0 && (
+              <div className="mt-3 bg-emerald-950/20 border border-emerald-500/20 rounded px-2 py-1 text-[11px] font-mono text-emerald-300">
+                Invertido: <strong>{stakedFgc.toFixed(1)} FGC</strong> activos en Staking.
+              </div>
+            )}
+          </div>
+          <button 
+            onClick={() => setShowStakingModal(true)}
+            className="w-full mt-4 py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md transition-all cursor-pointer text-center"
+          >
+            Ver Rendimientos
+          </button>
+        </div>
+
+        {/* Module 2: Modo Junior (Financial Edu) */}
+        <div className="bg-gradient-to-br from-black/40 to-slate-900/10 border border-white/5 rounded-2xl p-4 flex flex-col justify-between hover:border-purple-500/25 transition-all">
+          <div>
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-7 h-7 rounded bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20">
+                <Gamepad2 className="w-4 h-4" />
+              </div>
+              <span className="font-display font-bold text-sm text-white">Modo Junior {juniorEnabled && '🎮'}</span>
+            </div>
+            <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+              Educación para niños. Generación controlada de FGC por buen uso, canjeable directamente por tarjetas digitales Google Play o Robux.
+            </p>
+            {juniorEnabled && (
+              <div className="mt-3 bg-purple-950/20 border border-purple-500/20 rounded px-2 py-1 text-[11px] font-mono text-purple-300">
+                Perfil Activo: <strong>{childName || 'Junior'}</strong> · Meta: {targetGoal} FGC.
+              </div>
+            )}
+          </div>
+          <button 
+            onClick={() => setShowJuniorModal(true)}
+            className="w-full mt-4 py-2 px-3 bg-transparent hover:bg-white/5 text-[#a463f5] border border-[#a463f5]/40 hover:border-[#a463f5] text-xs font-bold rounded-xl transition-all cursor-pointer text-center"
+          >
+            Configurar Perfil Niño
+          </button>
+        </div>
+
+      </div>
+
+      {/* ================= MODALS & OVERLAYS ================= */}
+
+      {/* MODAL 1: Connect New Hardware */}
+      {showBinderModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="cyber-card w-full max-w-md p-6 rounded-2xl border border-white/10 relative shadow-2xl animate-fade-in">
+            <button 
+              onClick={() => { if(!isBinding) setShowBinderModal(false); }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-white cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2.5 pb-4 border-b border-white/5 mb-4">
+              <Cpu className="w-5 h-5 text-cyan-400" />
+              <h3 className="font-display font-bold text-base text-white">Vincular Nuevo Hardware</h3>
+            </div>
+
+            {!isBinding ? (
+              <form onSubmit={handleStartBinding} className="space-y-4 text-xs">
+                <div>
+                  <label className="block text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
+                    Nombre o Marca del Dispositivo:
+                  </label>
+                  <input 
+                    type="text" 
+                    value={deviceName}
+                    onChange={(e) => setDeviceName(e.target.value)}
+                    placeholder="Ej. Xiaomi Redmi 9A, Apple HomePod Parlante" 
+                    required
+                    className="w-full px-3.5 py-2.5 bg-black/50 border border-white/10 rounded-xl text-white font-sans focus:outline-none focus:border-cyan-500 text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
+                    Tipo de Hardware:
+                  </label>
+                  <select 
+                    value={deviceType}
+                    onChange={(e) => setDeviceType(e.target.value as NodeType)}
+                    className="w-full px-3.5 py-2.5 bg-[#0f0f1f] border border-white/10 rounded-xl text-white font-sans focus:outline-none focus:border-cyan-500 text-xs"
+                  >
+                    <option value="mobile">📱 Teléfono Móvil / Tablet antigua</option>
+                    <option value="smartspeaker">🔊 Parlante Inteligente (Google Home/Alexa)</option>
+                    <option value="router">🔌 Router Wifi o Repetidor inactivo</option>
+                    <option value="laptop">💻 Computadora Portátil / PC Secundaria</option>
+                    <option value="other">📺 Smart TV o Decodificador de Cable</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center text-[11px] font-mono text-gray-400 mb-1">
+                    <span>Aporte de Potencia de CPU:</span>
+                    <span className="text-cyan-400 font-bold">{devicePower}%</span>
+                  </div>
+                  <input 
+                    type="range"
+                    min="10" 
+                    max="45" 
+                    value={devicePower}
+                    onChange={(e) => setDevicePower(Number(e.target.value))}
+                    className="w-full accent-cyan-400 cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[9px] text-gray-500 mt-0.5">
+                    <span>Bajo Aporte (Económico)</span>
+                    <span>Alto Poder (Uso de CPU)</span>
+                  </div>
+                </div>
+
+                <div className="bg-cyan-950/20 border border-cyan-500/20 rounded-xl p-3 text-[11px] text-cyan-300 leading-relaxed">
+                  📢 <strong>Información Económica:</strong> Este dispositivo generará aproximadamente <strong>{(devicePower * 0.05).toFixed(2)} FGC al día</strong> al conectarse de manera desasistida.
+                </div>
+
+                <button 
+                  type="submit"
+                  className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-bold rounded-xl cursor-pointer hover:shadow-[0_0_15px_rgba(0,210,211,0.3)] transition-all"
+                >
+                  Conectar a la Red Neuraforge
+                </button>
+              </form>
+            ) : (
+              <div className="flex flex-col items-center py-6">
+                <div className="relative flex items-center justify-center w-16 h-16 rounded-full border border-cyan-500/20 bg-cyan-500/5 mb-5">
+                  <div className="absolute inset-0 rounded-full border-t-2 border-cyan-400 animate-spin" />
+                  <Cpu className="w-6 h-6 text-cyan-300 animate-pulse" />
+                </div>
+                
+                <h4 className="font-display font-semibold text-sm text-gray-100 mb-1">Estableciendo Enlace</h4>
+                
+                {/* Micro progress bar */}
+                <div className="w-full bg-gray-900 rounded-full h-1 mb-4 overflow-hidden max-w-xs">
+                  <div className="bg-cyan-400 h-full transition-all duration-300" style={{ width: `${bindingProgress}%` }} />
+                </div>
+
+                {/* Console logs output */}
+                <div className="w-full text-left bg-black/60 p-3 rounded-lg border border-white/5 font-mono text-[9px] text-[#00d2d3] space-y-1 overflow-y-auto max-h-[140px]">
+                  {bindingLogs.map((log, i) => (
+                    <div key={i} className="leading-snug">{log}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: Staking investment tier calculator */}
+      {showStakingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="cyber-card w-full max-w-md p-6 rounded-2xl border border-white/10 relative shadow-2xl">
+            <button 
+              onClick={() => setShowStakingModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-white cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2.5 pb-4 border-b border-white/5 mb-4">
+              <TrendingUp className="w-5 h-5 text-emerald-400" />
+              <h3 className="font-display font-bold text-base text-white">Staking / Proyecto de Inversión</h3>
+            </div>
+
+            {!stakingSuccess ? (
+              <form onSubmit={handleStakingSubmit} className="space-y-4 text-xs">
+                <p className="text-gray-400 leading-relaxed text-xs">
+                  Respalda los cálculos criptográficos del bot global haciendo Staking. Tus Forgecoins quedarán bloqueados generando recompensas compuestas estables.
+                </p>
+
+                <div className="flex justify-between items-center text-xs text-gray-300 bg-gray-900/50 p-2.5 rounded-lg border border-white/5">
+                  <span>Tus Forgecoins Libres:</span>
+                  <span className="font-mono font-bold text-[#00d2d3]">{totalFgc.toFixed(4)} FGC</span>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
+                    Cantidad a Invertir (FGC):
+                  </label>
+                  <input 
+                    type="number" 
+                    value={stakeAmount}
+                    onChange={(e) => setStakeAmount(e.target.value)}
+                    min="1" 
+                    max={totalFgc}
+                    className="w-full px-3.5 py-2.5 bg-black/50 border border-white/10 rounded-xl text-white font-mono focus:outline-none focus:border-emerald-500 test-xs" 
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
+                    Duración del Bloqueo:
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      type="button"
+                      onClick={() => setSelectedDuration(6)}
+                      className={`py-2 px-3.5 rounded-xl border font-bold font-sans transition-all cursor-pointer ${selectedDuration === 6 ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300' : 'bg-black/50 border-white/10 text-gray-400'}`}
+                    >
+                      6 Meses (12% APY)
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setSelectedDuration(12)}
+                      className={`py-2 px-3.5 rounded-xl border font-bold font-sans transition-all cursor-pointer ${selectedDuration === 12 ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300' : 'bg-black/50 border-white/10 text-gray-400'}`}
+                    >
+                      12 Meses (20% APY)
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-black/40 p-3.5 rounded-xl border border-white/5 space-y-1.5 text-[11px] font-mono">
+                  <div className="flex justify-between text-gray-400">
+                    <span>Retorno Estimado Total:</span>
+                    <span className="text-white font-bold">{projectedReturn.toFixed(2)} FGC</span>
+                  </div>
+                  <div className="flex justify-between text-gray-400">
+                    <span>Ganancia Neta:</span>
+                    <span className="text-emerald-400">+{ (projectedReturn - Number(stakeAmount)).toFixed(2) } FGC</span>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit"
+                  disabled={Number(stakeAmount) > totalFgc || Number(stakeAmount) <= 0}
+                  className="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+                >
+                  Confirmar Staking de FGC
+                </button>
+              </form>
+            ) : (
+              <div className="flex flex-col items-center py-8 text-center">
+                <CheckCircle2 className="w-16 h-16 text-emerald-400 animate-bounce mb-4" />
+                <h4 className="font-display font-semibold text-base text-gray-100">¡Contrato Creado con Éxito!</h4>
+                <p className="text-xs text-gray-400 mt-2">
+                  Tus {stakeAmount} FGC se han transferido al fondo de minería distribuida. El rendimiento compuesto ha comenzado.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: Modo Junior Setup */}
+      {showJuniorModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+          <div className="cyber-card w-full max-w-md p-6 rounded-2xl border border-white/10 relative shadow-2xl">
+            <button 
+              onClick={() => setShowJuniorModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-white cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2.5 pb-4 border-b border-white/5 mb-4">
+              <Gamepad2 className="w-5 h-5 text-purple-400" />
+              <h3 className="font-display font-bold text-base text-white">Configuración del Modo Junior</h3>
+            </div>
+
+            <div className="space-y-4 text-xs">
+              <p className="text-gray-400 leading-relaxed text-xs">
+                Inculca hábitos de ahorro digital y educación financiera a tus niños configurando un perfil secundario con metas divertidas.
+              </p>
+
+              <div className="flex items-center justify-between p-3.5 bg-purple-500/5 rounded-xl border border-purple-500/20">
+                <div className="flex flex-col">
+                  <span className="font-bold text-[#a463f5]">Modo Junior Educativo</span>
+                  <span className="text-[10px] text-gray-400 mt-0.5">Activa la interfaz controlada infantil</span>
+                </div>
+                
+                {/* Switch handler */}
+                <button
+                  type="button"
+                  onClick={() => setJuniorEnabled(!juniorEnabled)}
+                  className={`w-11 h-6 rounded-full flex items-center p-0.5 cursor-pointer transition-all ${juniorEnabled ? 'bg-purple-600 justify-end' : 'bg-gray-800 justify-start'}`}
+                >
+                  <span className="w-5 h-5 rounded-full bg-white shadow-md block" />
+                </button>
+              </div>
+
+              {juniorEnabled && (
+                <div className="space-y-3 pt-2 animate-fade-in">
+                  <div>
+                    <label className="block text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
+                      Nombre del Niño / Menor:
+                    </label>
+                    <input 
+                      type="text" 
+                      value={childName}
+                      onChange={(e) => setChildName(e.target.value)}
+                      placeholder="Ej. Lucas, Valentina" 
+                      className="w-full px-3.5 py-2 bg-black/50 border border-white/10 rounded-xl text-white font-sans text-xs focus:border-purple-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
+                      Meta de Monedas Diarias (FGC):
+                    </label>
+                    <input 
+                      type="number" 
+                      value={targetGoal}
+                      onChange={(e) => setTargetGoal(e.target.value)}
+                      className="w-full px-3.5 py-2 bg-black/50 border border-white/10 rounded-xl text-white font-mono text-xs focus:border-purple-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-1">
+                      Premio a canjear con monedas:
+                    </label>
+                    <select 
+                      value={selectedReward}
+                      onChange={(e) => setSelectedReward(e.target.value)}
+                      className="w-full px-3.5 py-2 bg-[#0a0a1a] border border-[#a463f5]/20 rounded-xl text-white font-sans text-xs focus:border-purple-500 focus:outline-none"
+                    >
+                      <option value="tarjeta-google-play">Tarjeta Google Play $10 USD</option>
+                      <option value="robux-pack">1,000 Robux (Roblox)</option>
+                      <option value="minecraft-skin">Minecraft Minecoins Gold Edition</option>
+                      <option value="steam-gift">Tarjeta Steam Wallet Fund $5 USD</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              <button 
+                onClick={() => setShowJuniorModal(false)}
+                className="w-full py-2.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-bold rounded-xl cursor-pointer hover:shadow-[0_0_15px_rgba(164,99,245,0.3)]"
+              >
+                Guardar Configuración Infantil
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
