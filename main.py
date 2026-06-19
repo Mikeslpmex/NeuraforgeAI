@@ -6,6 +6,12 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
+app = FastAPI()
+
+# Montar el dashboard
 
 from fastapi.staticfiles import StaticFiles
 app.mount("/dashboard", StaticFiles(directory="dashboard"), name="dashboard")
