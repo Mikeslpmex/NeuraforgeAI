@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+gunicorn
+requests
+python-dotenv
+google-generativeai
+requestsFlask==3.0.
