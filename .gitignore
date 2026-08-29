@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-# --- Seguridad y Secretos ---
+# Seguridad y Secretos ---
 *.keystore
 *.jks
 *.json
@@ -77,7 +76,6 @@ env/
 *.lock
 ngrok
 .DS_Store
->>>>>>> dd4f4e8fbb17b2fd5d747e0282c7a564ca0d5732
 .quantum_vault_keys.json
 gcp_keys.json
 .quantum_vault_keys.json
@@ -85,3 +83,9 @@ gcp_keys.json
 .env
 __pycache__/
 *.pyc
+__pycache__/
+*.pyc
+backups/
+*.log
+.env
+node_modules/
